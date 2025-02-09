@@ -21,7 +21,7 @@ spec:
         - containerPort: 5601
         env:
         - name: ELASTICSEARCH_HOSTS
-          value: "http://elasticsearch-client:9300"
+          value: "http://elasticsearch-client:9200"
         securityContext:
           runAsNonRoot: true
           allowPrivilegeEscalation: false

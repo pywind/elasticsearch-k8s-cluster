@@ -61,6 +61,16 @@ curl http://10.103.9.167
 
 [![Deployment](https://user-images.githubusercontent.com/10581130/97151810-9bbe1a80-17a2-11eb-95d4-9bb0c209cea8.gif)](https://asciinema.org/a/nv6eyG8PEpOU1XpljK5UZ1mOR)
 
+## Security Note
+
+The credentials file has been hidden for security reasons.
+Create your own credentials file (elastic/credentials.properties) with the following content:
+
+```properties
+elastic.username=${ELASTIC_USERNAME}
+elastic.password=${ELASTIC_PASSWORD}
+```
+
 ## Destroying
 
 Destroying your cluster is simple as well. Make sure that you know what you are doing.

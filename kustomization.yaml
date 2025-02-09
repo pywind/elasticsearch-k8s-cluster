@@ -1,17 +1,17 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: monitoring
+namespace: metadata.namespace
 commonLabels:
   app: elasticsearch
 images:
   - name: elasticsearch
-    newTag: 7.10.0
+    newTag: 8.8.0
     newName: docker.elastic.co/elasticsearch/elasticsearch
   - name: busybox
     newTag: 1.32.0  # updated busybox version with latest security fixes
     newName: busybox
   - name: kibana
-    newTag: 7.10.0
+    newTag: 8.8.0
     newName: docker.elastic.co/kibana/kibana
 resources:
   - resources/master.yaml
@@ -32,3 +32,43 @@ configMapGenerator:
   - name: tmpdir
     literals:
       - tmpdir=/tmp
+  - name: cluster-params
+    literals:
+      - master_replicas=2
+      - data_replicas=1
+      - client_replicas=1
+      - vm_max_map_count=262144
+      - fs_file_max=65536
+
+vars:
+  - name: namespace
+    objref:
+      kind: Namespace
+      name: database
+    fieldref:
+      fieldpath: metadata.namespace
+  - name: MASTER_REPLICAS
+    objref:
+      kind: ConfigMap
+      name: cluster-params
+      apiVersion: v1
+    fieldref:
+      fieldPath: data.master_replicas
+  - name: DATA_REPLICAS
+    objref:
+      kind: ConfigMap
+      name: cluster-params
+      apiVersion: v1
+    fieldref:
+      fieldPath: data.data_replicas
+  - name: CLIENT_REPLICAS
+    objref:
+      kind: ConfigMap
+      name: cluster-params
+      apiVersion: v1
+    fieldref:
+      fieldPath: data.client_replicas
+secretGenerator:
+  - name: elastic-credentials
+    files:
+      - elastic/credentials.properties

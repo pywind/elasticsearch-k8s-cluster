@@ -15,11 +15,15 @@ network.host: 0.0.0.0
 # DISCOVERY SETTINGS
 cluster.initial_master_nodes:
   - elasticsearch-master-0.elasticsearch-master
-  - elasticsearch-master-1.elasticsearch-master
 discovery.seed_hosts:
   - elasticsearch-master
   - elasticsearch-data
   - elasticsearch-client
+
+# Enable x-pack security features
+xpack.security.enabled: true
+xpack.security.authc.api_key.enabled: true
+
 # HEAP SIZE
 # See jvm.options file
 

@@ -6,7 +6,7 @@ metadata:
   name: elasticsearch-client
 spec:
   podManagementPolicy: Parallel
-  replicas: 1
+  replicas: $(CLIENT_REPLICAS)
   selector:
     matchLabels:
       app: elasticsearch
@@ -26,8 +26,19 @@ spec:
             - -c
             - >-
               touch /tmp/healthy &&
-              sysctl -w vm.max_map_count=262144 &&
-              sysctl -w fs.file-max=65536
+              sysctl -w vm.max_map_count=${VM_MAX_MAP_COUNT} &&
+              sysctl -w fs.file-max=${FS_FILE_MAX}
+          env:
+            - name: VM_MAX_MAP_COUNT
+              valueFrom:
+                configMapKeyRef:
+                  name: cluster-params
+                  key: vm_max_map_count
+            - name: FS_FILE_MAX
+              valueFrom:
+                configMapKeyRef:
+                  name: cluster-params
+                  key: fs_file_max
           resources: {}
           securityContext:
             privileged: true
@@ -56,6 +67,16 @@ spec:
               value: '${HOSTNAME}.$(APP)-$(ROLE)'
             - name: node.roles
               value: master,voting_only
+            - name: ELASTIC_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: elastic-credentials
+                  key: elastic.username
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: elastic-credentials
+                  key: elastic.password
           livenessProbe:
             exec:
               command:
@@ -79,7 +100,7 @@ spec:
               cpu: 100m
               memory: 1500Mi
           securityContext:
-            privileged: true
+            runAsNonRoot: true
           ports:
             - containerPort: 9300
               name: transport
