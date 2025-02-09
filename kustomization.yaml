@@ -5,16 +5,20 @@ commonLabels:
   app: elasticsearch
 images:
   - name: elasticsearch
-    newTag: 7.9.3
+    newTag: 7.10.0
     newName: docker.elastic.co/elasticsearch/elasticsearch
   - name: busybox
-    newTag: 1.31.1
+    newTag: 1.32.0  # updated busybox version with latest security fixes
     newName: busybox
+  - name: kibana
+    newTag: 7.10.0
+    newName: docker.elastic.co/kibana/kibana
 resources:
   - resources/master.yaml
   - resources/data.yaml
   - resources/client.yaml
   - resources/loadbalancer.yaml
+  - resources/kibana.yaml
 configMapGenerator:
   - name: elasticsearch.yml
     files:
